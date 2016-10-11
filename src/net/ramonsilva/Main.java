@@ -3,16 +3,14 @@ package net.ramonsilva;
 public class Main {
 
     public static void main(String[] args) {
-        double[][] d = { { 1, 2, 3 }, { 4, 5, 6 }, { 9, 1, 3} };
-        Matriz D = new Matriz(d);
-        D.imprimir();
-        System.out.println();
+        double[][] d = { { 1, 2, 1 }, { 2, -1, 1 }, { 3, 1, -1} };
+        double[] indepentendTerms = {8,3,2};
 
-        Matriz A = Matriz.gerarMatrixAleatoria(5, 5);
-        Matriz b = A.transpose();
+        Matrix matrix = new Matrix(d, indepentendTerms);
+        matrix.print();
 
-        Matriz x = A.resolverPorEliminacaoGaussiana(b);
-        x.imprimir();
-        System.out.println();
+
     }
+
+
 }

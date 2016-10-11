@@ -140,11 +140,4 @@ public final class Matriz {
         }
     }
 
-    public Matriz transpose() {
-        Matriz A = new Matriz(LINHAS, COLUNAS);
-        for (int i = 0; i < COLUNAS; i++)
-            for (int j = 0; j < LINHAS; j++)
-                A.dados[j][i] = this.dados[i][j];
-        return A;
-    }
 }
