@@ -1,5 +1,7 @@
 package net.ramonsilva.util;
 
+import net.ramonsilva.Matrix;
+
 /**
  * Created by ramonsilva on 10/10/16.
  */
@@ -57,10 +59,34 @@ public class MatrixUtil {
     public static double[][] swapColumn(double[][] data, double[] colunm, int position) {
         double[][] m  = new double[data.length][data[0].length];
 
+        //Clonar a matrix
+        for (int j = 0 ; j < data.length; j++){
+            m[j] = data[j].clone();
+        }
+
         for(int i =0; i < data.length; i++){
-            m[i][position] = colunm[position];
+            m[i][position] = colunm[i];
         }
 
         return m;
+    }
+
+    public static Matrix getArgumentedMatrix(Matrix m){
+
+        double[] zeroEquallity = new double[m.getLines()];
+        double[][] argumented = new double[m.getLines()][m.getColumns()+1];
+        double[][] data = m.getData();
+        double[] independenterms = m.getIndependentTerms();
+
+        for(int i = 0; i < m.getLines(); i++){
+            for (int j = 0 ; j < m.getColumns(); j++){
+                argumented[i][j] = data[i][j];
+            }
+
+            argumented[i][argumented.length] = independenterms[i];
+        }
+
+        Matrix ma = new Matrix(argumented, zeroEquallity);
+        return ma;
     }
 }
