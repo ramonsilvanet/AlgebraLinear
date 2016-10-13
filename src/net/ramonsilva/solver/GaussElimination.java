@@ -15,7 +15,7 @@ public class GaussElimination implements MatrixSolver {
         int TERMS = matrix.getIndependentTerms().length;
 
         if(LINES != COLUMNS || COLUMNS != TERMS){
-            throw new RuntimeException("Invalid matrix");
+            throw new RuntimeException("Matrix com dimensoes invalidas");
         }
 
         double[][] A = matrix.getData();
@@ -23,7 +23,6 @@ public class GaussElimination implements MatrixSolver {
 
         for (int p = 0; p < TERMS; p++) {
 
-            // find pivot row and swap
             int max = p;
             for (int i = p + 1; i < TERMS; i++) {
                 if (Math.abs(A[i][p]) > Math.abs(A[max][p])) {
@@ -33,12 +32,11 @@ public class GaussElimination implements MatrixSolver {
             double[] temp = A[p]; A[p] = A[max]; A[max] = temp;
             double   t    = b[p]; b[p] = b[max]; b[max] = t;
 
-            // singular or nearly singular
+
             if (Math.abs(A[p][p]) <= EPSILON) {
-                throw new RuntimeException("Matrix is singular or nearly singular");
+                throw new RuntimeException("Matrix Singular");
             }
 
-            // pivot within A and b
             for (int i = p + 1; i < TERMS; i++) {
                 double alpha = A[i][p] / A[p][p];
                 b[i] -= alpha * b[p];
@@ -58,18 +56,5 @@ public class GaussElimination implements MatrixSolver {
             x[i] = (b[i] - sum) / A[i][i];
         }
         return x;
-    }
-
-    private double[] applyBacksubstituition(double[][] A, double[] b) {
-        double[] solution = new double[A.length];
-
-        for (int j = A.length - 1; j >= 0; j--) {
-            double t = 0.0;
-            for (int k = j + 1; k < A.length; k++)
-                t += A[j][k] * solution[k];
-            solution[j] = (b[j] - t) / A[j][j];
-        }
-
-        return solution;
     }
 }
