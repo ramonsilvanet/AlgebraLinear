@@ -5,6 +5,7 @@ package net.ramonsilva;
  */
 public final class Matriz {
 
+
     private int LINHAS;
     private int COLUNAS;
 

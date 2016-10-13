@@ -80,6 +80,13 @@ public class MatrixUtil {
         return matrix;
     }
 
+    public static double[] swapRows(double[] matrix,  int upline, int downline){
+        double temp = matrix[upline];
+        matrix[upline] = matrix[downline];
+        matrix[downline] = temp;
+
+        return matrix;
+    }
 
     public static Matrix getArgumentedMatrix(Matrix m){
 
