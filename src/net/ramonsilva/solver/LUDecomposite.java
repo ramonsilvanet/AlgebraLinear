@@ -50,19 +50,16 @@ public class LUDecomposite implements MatrixSolver {
             }
 
             //swap rows
-            for(int k = i; k < LINES; k++){
-                double tmp = UPPER[max][k];
-                UPPER[max][k] = UPPER[i][k];
-                UPPER[i][k] = tmp;
-            }
+            //double[] temp = UPPER[i]; UPPER[i] = UPPER[max]; UPPER[max] = temp;
+            //double   t    = b[i]; b[i] = b[max]; b[max] = t;
 
             //Subtract lines
             for (int k = i + 1; k < LINES; k++){
-                double c = - (UPPER[k][i]) / UPPER[i][i];
+                double c = (UPPER[k][i]) / UPPER[i][i];
                 LOWER[k][i] = c; // Store the coeficient
 
                 for(int j = i ; j < LINES; j++){
-                    UPPER[k][j] += c * UPPER[i][j]; // Multiply with the pivot line and subtract
+                    UPPER[k][j] -= c * UPPER[i][j]; // Multiply with the pivot line and subtract
                 }
             }
 
@@ -86,12 +83,13 @@ public class LUDecomposite implements MatrixSolver {
 
         //Solve the upper matrix
         double[] x = new double[TERMS];
-        for(int i = TERMS - 1; i > -1; i--) {
-            x[i] = y[i] / UPPER[i][i];
 
-            for(int k = i - 1; k > -1; k--){
-                x[i] -= x[i] * UPPER[i][k];
+        for (int i = TERMS - 1; i >= 0; i--) {
+            double sum = 0.0;
+            for (int j = i + 1; j < TERMS; j++) {
+                sum += UPPER[i][j] * x[j];
             }
+            x[i] = (y[i] - sum) / UPPER[i][i];
         }
 
         return x;
