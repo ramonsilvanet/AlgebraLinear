@@ -106,4 +106,24 @@ public class MatrixUtil {
         Matrix ma = new Matrix(argumented, zeroEquallity);
         return ma;
     }
+
+    // is symmetric
+    public static boolean isSymmetric(double[][] A) {
+        int N = A.length;
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < i; j++) {
+                if (A[i][j] != A[j][i]) return false;
+            }
+        }
+        return true;
+    }
+
+    // is symmetric
+    public static boolean isSquare(double[][] A) {
+        int N = A.length;
+        for (int i = 0; i < N; i++) {
+            if (A[i].length != N) return false;
+        }
+        return true;
+    }
 }

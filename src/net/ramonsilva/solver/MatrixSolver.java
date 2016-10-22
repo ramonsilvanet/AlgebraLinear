@@ -7,6 +7,6 @@ import net.ramonsilva.Matrix;
  */
 public interface MatrixSolver {
 
-    double[] solve(Matrix m);
+    double[] solve(Matrix matrix);
 
 }
