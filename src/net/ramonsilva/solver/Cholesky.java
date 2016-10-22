@@ -25,19 +25,23 @@ public class Cholesky implements MatrixSolver {
         }
 
         double [][] LOWER = new double[LINES][COLUMNS];
-        for(int k = 0 ; k < COLUMNS; k++){
-            for(int i = k ; i < COLUMNS; i++){
-                LOWER[k][k] -= Math.pow(LOWER[k][i], 2);
-            }
+        for(int i = 0 ; i < COLUMNS; i++){
+            for(int j = 0; j <= i; j++){
 
-            LOWER[k][k] = Math.sqrt(A[k][k] - LOWER[k][k]);
-
-            for(int i = k+1 ; i < COLUMNS; i++){
-                for(int j = 0; j < LINES; j++){
-                    LOWER[i][k] -= LOWER[i][j] * LOWER[k][j];
+                double sum = 0.0;
+                for(int k = 0;k < j; k++){
+                    sum += LOWER[i][k] * LOWER[i][j];
                 }
 
-                LOWER[i][k] = (A[k][i] - LOWER[i][k])/ LOWER[k][k];
+                if(i == j){
+                    LOWER[i][i] = Math.sqrt(A[i][i] - sum);
+                } else {
+                    LOWER[i][j] = 1.0 / LOWER[j][j] * (A[i][j] - sum);
+                }
+            }
+
+            if(LOWER[i][i] <= 0){
+                throw new RuntimeException("Matrix is not positive definte");
             }
         }
 
@@ -53,7 +57,7 @@ public class Cholesky implements MatrixSolver {
             }
         }
 
-        //Solve the upper matrix
+       //Back substituition
         double[] x = new double[TERMS];
 
         for (int i = TERMS - 1; i >= 0; i--) {
@@ -66,6 +70,5 @@ public class Cholesky implements MatrixSolver {
 
         return x;
     }
-
 
 }
