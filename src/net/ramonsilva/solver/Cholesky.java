@@ -30,7 +30,7 @@ public class Cholesky implements MatrixSolver {
 
                 double sum = 0.0;
                 for(int k = 0;k < j; k++){
-                    sum += LOWER[i][k] * LOWER[i][j];
+                    sum += LOWER[i][k] * LOWER[i][k];
                 }
 
                 if(i == j){
