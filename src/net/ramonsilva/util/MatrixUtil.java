@@ -126,4 +126,26 @@ public class MatrixUtil {
         }
         return true;
     }
+
+    public static boolean isDiagonalDominant(double[][] a) {
+
+        int N = a.length;
+
+        for(int i = 0; i < N; i++){
+            double sum = 0.0;
+            double pivot = 0.0;
+
+            for(int j = 0; j < N; j++){
+                if(i == j){
+                    pivot = Math.abs(a[i][i]);
+                } else {
+                    sum += Math.abs(a[i][j]);
+                }
+            }
+
+            if( pivot <= sum) return false;
+        }
+
+        return true;
+    }
 }
