@@ -9,7 +9,6 @@ import net.ramonsilva.util.MatrixUtil;
 public class SORMethod implements MatrixSolver {
     private static final double EPSILON = 1e-10;
     private static int DEFAULT_INTERACTIONS = 100;
-    private static final double OMEGA = 1.0;
 
     private int k = 0;
     private int interactionsLimit = 0;
@@ -36,49 +35,52 @@ public class SORMethod implements MatrixSolver {
             throw new RuntimeException("Matix is not diagonal dominant");
         }
 
+
         double[] c = new double[N];
-        double[] x = SOR(A, b, c);
+        double[] x = SOR(A, b, c, 1.9);
 
         return x;
     }
 
-    private double[] SOR(double[][] A, double[] b, double c[]){
+    private double[] SOR(double[][] A, double[] b, double c[], double w){
         int N = A.length;
+        boolean conv = false;
 
-        double[] x = new double[N];
-        System.arraycopy(c, 0, x, 0, c.length);
+        while(k < interactionsLimit && !conv) {
 
-        for (int i = 0; i < N; i++){
-            double sum = 0.0;
+            double[] x = new double[N];
+            System.arraycopy(c, 0, x, 0, c.length);
 
-            for (int j = 0; j < N; j++) {
-                if(i != j) {
-                    sum += A[i][j] * x[j];
+            for (int i = 0; i < N; i++) {
+                double sum = 0;
+                for (int j = 0; j < N; j++) {
+                    if (j != i) {
+                        sum += A[i][j] * c[j];
+                    }
+                }
+
+                c[i] = (1 - w) * c[i] + ((w / A[i][i]) * (b[i] - sum));
+            }
+
+            double maxDiff = 0.0;
+            for (int i = 0; i < N; i++) {
+                double diff = Math.abs(x[i] - c[i]);
+
+                if(diff > maxDiff){
+                    maxDiff = diff;
                 }
             }
 
-            x[i] = x[i] + OMEGA * (b[i] - sum) / A[i][i];
-
-        }
-
-        k++;
-
-        boolean conv = true;
-        for (int i = 0;i < N; i++){
-
-            double diff = Math.abs(x[i] - c[i]);
-            if(diff > EPSILON){
-                conv = false;
-                break;
+            if(maxDiff < EPSILON){
+                conv = true;
             }
+
+            k++;
+
         }
 
+        System.out.print("Converge in " + k + " interactions");
 
-        if(conv || k == interactionsLimit ){
-            System.out.println("Converge in " + k + " interactions.");
-            return c;
-        } else {
-            return SOR(A, b, c);
-        }
+        return c;
     }
 }

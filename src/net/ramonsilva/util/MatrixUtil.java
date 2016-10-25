@@ -148,4 +148,37 @@ public class MatrixUtil {
 
         return true;
     }
+
+    public static double[][] plus(double[][] a, double[][] b) {
+
+        int N = a.length;
+        double[][] c = new double[N][N];
+
+        for (int i=0; i < N; ++i){
+            for (int j = 0; j < N; ++j){
+                c[i][j] = a[i][j] + b[i][j];
+            }
+        }
+
+        return c;
+    }
+
+    public static double[][] times(double[][] a, double[][] b) {
+
+        int l = a.length;
+        int n = a[0].length;
+        int m = b.length;
+
+        double[][] c = new double[l][m];
+
+        for (int i=0; i<l; ++i) {
+            for (int j = 0; j < n; ++j) {
+                for (int k = 0; k < m; ++k) {
+                    c[i][k] += a[i][k] * b[k][j];
+                }
+            }
+        }
+
+        return c;
+    }
 }
