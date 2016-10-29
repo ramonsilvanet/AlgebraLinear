@@ -6,7 +6,7 @@ import net.ramonsilva.util.MatrixUtil;
 /**
  * Created by ramonsilva on 29/10/16.
  */
-public class GradientDescent implements MatrixSolver {
+public class DescendGradient implements MatrixSolver {
 
     private static final double EPSILON = 1e-10;
     private static final double OMEGA = 1.00;
@@ -15,11 +15,11 @@ public class GradientDescent implements MatrixSolver {
     private int interactionsLimit = 0;
     private int k = 0;
 
-    public GradientDescent(){
+    public DescendGradient(){
         this(DEFAULT_INTERACTIONS);
     }
 
-    public GradientDescent(int interactionsLimit){
+    public DescendGradient(int interactionsLimit){
         this.interactionsLimit = interactionsLimit;
     }
 
