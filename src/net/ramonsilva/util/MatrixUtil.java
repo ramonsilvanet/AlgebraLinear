@@ -56,6 +56,17 @@ public class MatrixUtil {
         return transposeMatrix;
     }
 
+    public static double[][] transpose(double data[]){
+        int numLines = data.length;
+        double[][] transposed = new double[numLines][1];
+
+        for (int i = 0; i < numLines; i++){
+            transposed[i][0] = data[i];
+        }
+
+        return transposed;
+    }
+
     public static double[][] swapColumn(double[][] data, double[] colunm, int position) {
         double[][] m  = new double[data.length][data[0].length];
 
@@ -80,13 +91,6 @@ public class MatrixUtil {
         return matrix;
     }
 
-    public static double[] swapRows(double[] matrix,  int upline, int downline){
-        double temp = matrix[upline];
-        matrix[upline] = matrix[downline];
-        matrix[downline] = temp;
-
-        return matrix;
-    }
 
     public static Matrix getArgumentedMatrix(Matrix m){
 
@@ -163,7 +167,7 @@ public class MatrixUtil {
         return c;
     }
 
-    public static double[][] times(double[][] a, double[][] b) {
+    public static double[][] multiply(double[][] a, double[][] b) {
 
         int l = a.length;
         int n = a[0].length;
@@ -180,5 +184,72 @@ public class MatrixUtil {
         }
 
         return c;
+    }
+
+    public static double[] multiplyMatrixByVector(double[][] a, double[] c) {
+
+        int M = a.length;
+        int N = c.length;
+
+        double[] y = new double[M];
+
+        for(int i = 0 ; i < M; i++){
+            for(int j = 0 ; j < N ; j++){
+                y[i] += a[i][j] * c[j];
+            }
+        }
+
+        return y;
+    }
+
+    public static double[] multiplyMatrixByMatrix(double[][] a, double[][] c) {
+
+        int M = a.length;
+        int N = c.length;
+
+        double[] y = new double[M];
+
+        for(int i = 0 ; i < M; i++){
+            for(int j = 0 ; j < N ; j++){
+                y[i] += a[i][j] * c[i][j];
+            }
+        }
+
+        return y;
+    }
+
+    public static double[] subtractVectors(double[] x, double[] y) {
+        int N = x.length;
+        double[] z = new double[N];
+
+
+        for(int i = 0; i < N; i++){
+            z[i] = x[i] - y[i];
+        }
+
+        return z;
+
+    }
+
+    public static double[] multiplyScalarByVector(double scalar, double[] vector){
+        int N = vector.length;
+        double[] z = new double[N];
+
+        for(int i = 0; i < N; i++){
+            z[i] = scalar * vector[i];
+        }
+
+        return z;
+    }
+
+    public static double[] addTwoVectors(double[] x, double[] y){
+        int N = x.length;
+        double[] z = new double[N];
+
+        for(int i = 0; i < N; i++){
+            z[i] = x[i] * y[i];
+        }
+
+        return z;
     }
 }
