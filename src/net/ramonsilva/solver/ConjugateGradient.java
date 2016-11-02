@@ -2,6 +2,7 @@ package net.ramonsilva.solver;
 
 import net.ramonsilva.Matrix;
 import net.ramonsilva.util.MatrixUtil;
+import net.ramonsilva.util.VectorUtil;
 
 /**
  * Created by ramonsilva on 29/10/16.
@@ -55,7 +56,7 @@ public class ConjugateGradient implements MatrixSolver {
             double[] q = MatrixUtil.multiplyMatrixByVector(A, d);
             double[][] dTrans = MatrixUtil.transpose(d);
             double alpha = delta[0] / MatrixUtil.multiplyMatrixByVector(dTrans, q)[0];
-            c = MatrixUtil.addTwoVectors(c, MatrixUtil.multiplyScalarByVector(alpha, q));
+            c = VectorUtil.addTwoVectors(c, MatrixUtil.multiplyScalarByVector(alpha, q));
 
             if(k % 50 == 0){
                 residual = MatrixUtil.subtractVectors(b, MatrixUtil.multiplyMatrixByVector(A, c));
@@ -68,7 +69,7 @@ public class ConjugateGradient implements MatrixSolver {
             residualT = MatrixUtil.transpose(residual);
             delta = MatrixUtil.multiplyMatrixByVector(residualT,residual);
             double beta = delta[0] / tempDelta[0];
-            d = MatrixUtil.addTwoVectors(residual, MatrixUtil.multiplyScalarByVector(beta, d));
+            d = VectorUtil.addTwoVectors(residual, MatrixUtil.multiplyScalarByVector(beta, d));
 
             k++;
 

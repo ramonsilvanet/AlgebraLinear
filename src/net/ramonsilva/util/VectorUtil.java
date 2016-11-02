@@ -39,9 +39,13 @@ public class VectorUtil {
     public static double normalize(double[] v){
         double norm = EuclidNorm(v);
 
-        for (int i = 0; i < v.length; i++) {
-            v[i] /= norm;
+         if(norm != 0) {
+            for (int i = 0; i < v.length; i++) {
+                v[i] /= norm;
+            }
+
         }
+
         return norm;
     }
 

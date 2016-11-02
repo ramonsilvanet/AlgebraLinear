@@ -2,6 +2,7 @@ package net.ramonsilva.solver;
 
 import net.ramonsilva.Matrix;
 import net.ramonsilva.util.MatrixUtil;
+import net.ramonsilva.util.VectorUtil;
 
 /**
  * Created by ramonsilva on 29/10/16.
@@ -51,7 +52,7 @@ public class DescendGradient implements MatrixSolver {
             double[][] Ar = MatrixUtil.multiply(A, residualT);
             double alpha = MatrixUtil.multiplyMatrixByVector(residualT, residual)[0] / MatrixUtil.multiplyMatrixByMatrix(residualT, Ar)[0];
 
-            c = MatrixUtil.addTwoVectors(c, MatrixUtil.multiplyScalarByVector(alpha, residual));
+            c = VectorUtil.addTwoVectors(c, MatrixUtil.multiplyScalarByVector(alpha, residual));
 
             k++;
             residual = MatrixUtil.subtractVectors(b,MatrixUtil.multiplyMatrixByVector(A, c));

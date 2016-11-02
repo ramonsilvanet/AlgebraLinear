@@ -247,8 +247,7 @@ public class MatrixUtil {
         int N = a.length;
         double[] column = new double[N];
 
-        for (int i = 0; i < N; i++)
-        {
+        for (int i = 0; i < N; i++) {
             column[i] = a[i][columnNumber];
         }
 

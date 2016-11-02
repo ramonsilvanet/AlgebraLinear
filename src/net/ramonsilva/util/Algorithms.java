@@ -67,7 +67,8 @@ public class Algorithms {
     }
 
     public static double[] backSubstitution(int n, double[][] A, double[] b){
-        double[] x = new double[n];
+        double[] x = new double[n+1];
+
         for (int i = n - 1; i >= 0; i--) {
             double sum = 0.0;
             for (int j = i + 1; j < n; j++) {

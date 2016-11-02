@@ -6,8 +6,6 @@ import net.ramonsilva.util.Arnoldi;
 import net.ramonsilva.util.MatrixUtil;
 import net.ramonsilva.util.VectorUtil;
 
-import java.util.Arrays;
-
 /**
  * Created by ramonsilva on 02/11/16.
  */
@@ -18,6 +16,8 @@ public class GMRES implements MatrixSolver{
 
     private int interactionsLimit = 0;
     private int k = 0;
+
+    double[] INITIAL_CHUTE = {1.0,1.0,10};
 
     public GMRES(){
         this(DEFAULT_INTERACTIONS);
@@ -66,18 +66,20 @@ public class GMRES implements MatrixSolver{
             for (int i = 0; i < N; i++) {
                 x[i] = 0;
 
-                for (int j = 0; j <= N; j++){
-                    x[i]+= Q[i][j] * y[j];
+                for (int j = 0; j <= k; j++){
+                    x[i] += Q[i][j] * y[j];
                 }
             }
+
+            k++;
 
         } while(stopCondition(A, b, x));
 
 
         if(k == N - 1){
-            double[] v = MatrixUtil.multiplyMatrixByVector(A, MatrixUtil.getColumn(Q, N));
+            double[] v = MatrixUtil.multiplyMatrixByVector(A, MatrixUtil.getColumn(Q, k));
 
-            for (int i = 0; i <= N; i++){
+            for (int i = 0; i <= k; i++){
                 H[i][k] = VectorUtil.multiplyVectors(MatrixUtil.getColumn(Q, k), v);
             }
         }

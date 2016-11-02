@@ -2,7 +2,6 @@ package net.ramonsilva.solver;
 
 import net.ramonsilva.Matrix;
 import net.ramonsilva.util.Algorithms;
-import net.ramonsilva.util.MatrixUtil;
 
 public class GaussElimination implements MatrixSolver {
 
@@ -48,6 +47,6 @@ public class GaussElimination implements MatrixSolver {
         }
 
         // back substitution
-        return Algorithms.backSubstitution(LINES, A, b);
+        return Algorithms.backSubstitution(LINES-1, A, b);
     }
 }
