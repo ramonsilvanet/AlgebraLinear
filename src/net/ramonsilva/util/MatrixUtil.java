@@ -242,14 +242,49 @@ public class MatrixUtil {
         return z;
     }
 
-    public static double[] addTwoVectors(double[] x, double[] y){
-        int N = x.length;
-        double[] z = new double[N];
 
-        for(int i = 0; i < N; i++){
-            z[i] = x[i] * y[i];
+    public static double[] getColumn(double[][] a, int columnNumber){
+        int N = a.length;
+        double[] column = new double[N];
+
+        for (int i = 0; i < N; i++)
+        {
+            column[i] = a[i][columnNumber];
         }
 
-        return z;
+        return column;
+    }
+
+
+    public static double[][] product(double[][] a, double[][] b) {
+        int N = a.length;
+        double[][] c = new double[N][N];
+
+        for (int i =0; i < N; i++){
+            for(int j =0; j < N; j++){
+                c[i][j] = 0;
+
+                for (int k = 0; k < N; k++){
+                    c[i][j] += a[i][k] * b[k][j];
+                }
+            }
+        }
+
+        return c;
+    }
+
+    public static double[] product(double[][] a, double[] b) {
+        int N = a.length;
+        double[] c = new double[N];
+
+        for (int i = 0; i < N; i++){
+            c[i] = 0;
+
+            for (int j = 0; j < N; j++){
+                c[i] += a[i][j] * b[j];
+            }
+        }
+
+        return c;
     }
 }
