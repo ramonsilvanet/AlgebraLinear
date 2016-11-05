@@ -2,7 +2,6 @@ package net.ramonsilva.solver;
 
 import net.ramonsilva.Matrix;
 import net.ramonsilva.util.Algorithms;
-import net.ramonsilva.util.Arnoldi;
 import net.ramonsilva.util.MatrixUtil;
 import net.ramonsilva.util.VectorUtil;
 
@@ -11,7 +10,7 @@ import net.ramonsilva.util.VectorUtil;
  */
 public class GMRES implements MatrixSolver{
 
-    private static final double EPSILON = 0.2;
+    private static final double EPSILON = 1e-10;
     private static int DEFAULT_INTERACTIONS = 100;
 
     private int interactionsLimit = 0;
