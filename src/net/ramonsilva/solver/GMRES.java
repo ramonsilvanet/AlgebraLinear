@@ -41,7 +41,7 @@ public class GMRES implements MatrixSolver{
         double[] x = new double[N];
 
         //  Find q_0 = b/|b|
-        double norm = VectorUtil.EuclidNorm(b);
+        double norm = VectorUtil.Norm2(b);
         double[][] Q = new double[N][N];
         for (int i = 0; i < N; i++) {
             Q[i][0] = b[i] / norm;
@@ -120,7 +120,7 @@ public class GMRES implements MatrixSolver{
         double[] Ar = MatrixUtil.product(A, x);
         double[] r = VectorUtil.minus(Ar, b);
 
-        double rNorm = VectorUtil.EuclidNorm(r);
+        double rNorm = VectorUtil.Norm2(r);
 
         return ((rNorm > EPSILON) && (k < N - 1));
     }

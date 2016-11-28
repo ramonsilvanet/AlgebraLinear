@@ -17,7 +17,7 @@ public class VectorUtil {
     }
 
 
-    public static double EuclidNorm(double[] b) {
+    public static double Norm2(double[] b) {
         double norm = 0;
 
         for (int i = 0; i < b.length; i++) {
@@ -37,7 +37,7 @@ public class VectorUtil {
     }
 
     public static double normalize(double[] v){
-        double norm = EuclidNorm(v);
+        double norm = Norm2(v);
 
          if(norm != 0) {
             for (int i = 0; i < v.length; i++) {

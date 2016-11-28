@@ -12,7 +12,7 @@ public class Algorithms {
         }
 
         double[] g = new double[n + 1];
-        double bNorm = VectorUtil.EuclidNorm(b);
+        double bNorm = VectorUtil.Norm2(b);
 
         for (int i = 0; i < g.length; i++) {
             g[i] = bNorm * omega[i][0];
