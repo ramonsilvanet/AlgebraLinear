@@ -90,7 +90,7 @@ public class LeastSquares {
         QRDecomposition(A, Q, R);
 
 
-        // Step 1: Solve the system: y = Q^T b
+        // Step 1: Solve the system: y = Q^T v
         double[] y = MatrixUtil.multiplyMatrixByVector(MatrixUtil.transpose(Q), b);
 
         // Step 2: Solve the R system: Rx = y (regressive replacement)

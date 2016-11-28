@@ -18,11 +18,7 @@ public class MultiGrid implements MatrixSolver {
 
     MatrixSolver smoother;
 
-
-    List<Level> levels;
-
     public MultiGrid(){
-        levels = new ArrayList<>();
     }
 
     @Override
@@ -33,82 +29,70 @@ public class MultiGrid implements MatrixSolver {
         int N = matrix.getLines();
 
         //Initial chute
-        double[] x = new double[N];
-        for(int i = 0; i < N; i++) x[i] = 1;
+        double[] e = new double[N];
+        for(int i = 0; i < N; i++) e[i] = 1;
 
-        Level level_0 = new Level();
+        double[] residual = calculateResidual(A, e, b);
 
-        System.arraycopy(A, 0, level_0.A, 0, N);
-        System.arraycopy(b, 0, level_0.b, 0, N);
-        System.arraycopy(x, 0, level_0.r, 0, N);
+        int l = N;
+        smooth(A, e, TWICE);
 
-        levels.add(level_0);
+        while(l > 1) {
+            restrict(A, e);
+            smooth(A, e, ONCE);
+            l = e.length;
+        }
 
-        //R = b - Ax
-        double[] res = calculateResidual(A, x, b);
+        while(l < N) {
+            interpolate(A, e);
+            smooth(A, residual, ONCE);
+            l = e.length;
+        }
 
-        res = smooth(level_0.A, level_0.r, TWICE);
-
-        Level level_1 = restrict(level_0.A, level_0.r);
-        res = smooth(level_1.A, level_1.r);
-
-        Level l = interpolate(level_1);
-        level_0.r = l.r;
-        level_0.A = l.A;
-
-        level_0.r = smooth(level_0.A, level_0.r);
-
-        return Algorithms.backSubstitution(N-1, level_0.A, level_0.r);
+        return Algorithms.backSubstitution(N-1, A, residual);
     }
 
-    private Level restrict(double[][] A, double[] res){
+    private void restrict(double[][] A, double[] v){
+        int half  =  (int) Math.floor(v.length / 2);
+        int size = v.length - half;
 
-        Level level = new Level();
+        double[] rh  = new double[size];
+        double[][] ah = new double[A.length][A[0].length];
 
-        int half  =  (int) Math.floor(res.length / 2);
-        int size = res.length - half;
-
-        level.r  = new double[size];
-        level.A = new double[A.length][A[0].length];
-
-        for(int i = 0; i < res.length; i++){
+        for(int i = 0; i < v.length; i++){
             if(i % 2 != 0){
-                level.r[i] = res[i];
+                rh[i] = v[i];
             }
 
             for(int j = 0 ; j < A[0].length; j++){
                 if(j % 2 == 0) {
-                    level.A[i][j] = A[i][j];
+                    ah[i][j] = A[i][j];
                 }
             }
         }
 
-        return level;
     }
 
-    private Level interpolate(Level level){
-
-        Level l = new Level();
+    private void interpolate(double[][] A, double[] v){
 
         int size;
 
-        if(level.r.length % 2 == 0){
-            size = level.r.length * 2;
+        if(v.length % 2 == 0){
+            size = v.length * 2;
         } else {
-            size = (level.r.length * 2) - 1;
+            size = (v.length * 2) - 1;
         }
 
-        l.r = new double[size];
+        double[] r = new double[size];
 
         for(int i = 0 ; i < size; i ++){
             if(i % 2 == 0){
-                l.r[i] = level.r[i];
+                r[i] = v[i];
             } else {
-                l.r[i] = (level.r[i] + level.r[i-1]) / 2;
+                r[i] = (v[i] + v[i-1]) / 2;
             }
         }
 
-        return l;
     }
 
     private double[] smooth(double[][] A, double[] b){
@@ -123,16 +107,9 @@ public class MultiGrid implements MatrixSolver {
     }
 
     /**
-     * R = b - Ax
+     * R = v - Ax
      * */
     private double[] calculateResidual(double[][] A, double[] x, double[] b) {
         return MatrixUtil.subtractVectors(MatrixUtil.multiplyMatrixByVector(A, x), b);
-    }
-
-
-    private class Level{
-        double[][] A;
-        double[] b;
-        double[] r;
     }
 }

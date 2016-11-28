@@ -40,7 +40,7 @@ public class GMRES implements MatrixSolver{
 
         double[] x = new double[N];
 
-        //  Find q_0 = b/|b|
+        //  Find q_0 = v/|v|
         double norm = VectorUtil.Norm2(b);
         double[][] Q = new double[N][N];
         for (int i = 0; i < N; i++) {

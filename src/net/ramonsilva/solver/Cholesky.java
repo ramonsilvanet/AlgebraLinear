@@ -47,7 +47,7 @@ public class Cholesky implements MatrixSolver {
 
         double[][] TRANSPOSED = MatrixUtil.transpose(LOWER);
 
-        //  Perform substitution Ly=b
+        //  Perform substitution Ly=v
         double[] y = new double[TERMS];
         for(int i = 0; i < TERMS; i++) {
             y[i] = b[i] / LOWER[i][i];

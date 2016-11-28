@@ -51,7 +51,7 @@ public class LUDecomposite implements MatrixSolver {
 
             //swap rows
             //double[] temp = UPPER[i]; UPPER[i] = UPPER[max]; UPPER[max] = temp;
-            //double   t    = b[i]; b[i] = b[max]; b[max] = t;
+            //double   t    = v[i]; v[i] = v[max]; v[max] = t;
 
             //Subtract lines
             for (int k = i + 1; k < LINES; k++){
@@ -69,7 +69,7 @@ public class LUDecomposite implements MatrixSolver {
             }
         }
 
-        //  Perform substitution Ly=b
+        //  Perform substitution Ly=v
         double[] y = new double[TERMS];
 
         for(int i = 0; i < TERMS; i++) {
