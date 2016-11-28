@@ -35,17 +35,17 @@ public class MultiGrid implements MatrixSolver {
         double[] residual = calculateResidual(A, e, b);
 
         int l = N;
-        smooth(A, e, TWICE);
+        //smooth(A, e, TWICE);
 
         while(l > 1) {
             restrict(A, e);
-            smooth(A, e, ONCE);
+            //smooth(A, e);
             l = e.length;
         }
 
         while(l < N) {
             interpolate(A, e);
-            smooth(A, residual, ONCE);
+            smooth(A, residual);
             l = e.length;
         }
 
@@ -57,20 +57,23 @@ public class MultiGrid implements MatrixSolver {
         int size = v.length - half;
 
         double[] rh  = new double[size];
-        double[][] ah = new double[A.length][A[0].length];
+        double[][] ah = new double[size][size];
 
         for(int i = 0; i < v.length; i++){
             if(i % 2 != 0){
-                rh[i] = v[i];
-            }
+                rh[i/2] = v[i];
 
-            for(int j = 0 ; j < A[0].length; j++){
-                if(j % 2 == 0) {
-                    ah[i][j] = A[i][j];
+
+                for(int j = 0 ; j < A[0].length; j++){
+                    if(j % 2 == 0) {
+                        ah[i/2][j/2] = A[i][j];
+                    }
                 }
             }
         }
 
+        v = rh;
+        A = ah;
     }
 
     private void interpolate(double[][] A, double[] v){

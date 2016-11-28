@@ -17,7 +17,7 @@ public class MultiGridSolverTest {
     private static final double EPSILON = 1e-10;
 
     @Test
-    public void testMultiGridSolverThreeByThree(){
+    public void testMultiGridSolver(){
         double[][] data = {
                 { 2, -1, 0, 0, 0, 0, 0, 0, 0},
                 { -1, 2, -1, 0, 0, 0, 0, 0, 0},
