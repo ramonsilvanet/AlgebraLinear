@@ -286,4 +286,47 @@ public class MatrixUtil {
 
         return c;
     }
+
+    public static boolean sassenfeldCriterion(double[][] a){
+
+        if(isSquare(a)){
+            final int N = a.length;
+            double[] alpha = new double[N];
+
+            for(int i = 0 ; i < N; i++ ) alpha[i] = 1;
+
+
+            for(int k = 0 ; k < N; k ++){
+                if(k == 0){
+                    double sum = 0.0;
+                    for(int j = 1 ; j < N; j++){
+                        sum += Math.abs(a[k][j]);
+                    }
+
+                    alpha[k] = sum / a[0][0];
+
+                    if(alpha[k] >= 1){
+                        return false;
+                    }
+
+                } else {
+                    double sum = 0.0;
+
+                    for(int j = 0 ; j < N; j++){
+                        sum += Math.abs(a[k][j]) * alpha[k-1];
+                    }
+
+                    alpha[k] = sum / a[k][k];
+
+                    if(alpha[k] >= 1){
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        return false;
+    }
 }

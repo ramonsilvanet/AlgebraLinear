@@ -32,8 +32,8 @@ public class GaussSiedel implements MatrixSolver {
             throw new RuntimeException("Matrix is not Square");
         }
 
-        if(!MatrixUtil.isDiagonalDominant(A)){
-            throw new RuntimeException("Matix is not diagonal dominant");
+        if(!MatrixUtil.sassenfeldCriterion(A)){
+            throw new RuntimeException("Matrix does not converge");
         }
 
         double[] c = new double[N];
