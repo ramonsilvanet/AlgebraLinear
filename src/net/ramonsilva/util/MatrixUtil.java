@@ -313,7 +313,9 @@ public class MatrixUtil {
                     double sum = 0.0;
 
                     for(int j = 0 ; j < N; j++){
-                        sum += Math.abs(a[k][j]) * alpha[k-1];
+                        if(k != j) {
+                            sum += Math.abs(a[k][j]) * alpha[k - 1];
+                        }
                     }
 
                     alpha[k] = sum / a[k][k];

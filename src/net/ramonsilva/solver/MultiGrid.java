@@ -8,15 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-/**
- * Created by ramonsilva on 26/11/16.
- */
 public class MultiGrid implements MatrixSolver {
 
     private static final int ONCE = 1;
     private static final int TWICE = 2;
 
-    MatrixSolver smoother;
+    private MatrixSolver smoother;
 
     public MultiGrid(){
     }
@@ -34,46 +31,48 @@ public class MultiGrid implements MatrixSolver {
 
         double[] residual = calculateResidual(A, e, b);
 
-        int l = N;
-        //smooth(A, e, TWICE);
+        smooth(A, e, TWICE);
 
-        while(l > 1) {
-            restrict(A, e);
-            //smooth(A, e);
-            l = e.length;
+        Level lv = new Level(A, e, residual);
+
+        while(lv.N > 1) {
+            lv = restrict(lv);
+            smooth(lv.A, lv.y);
+            residual = calculateResidual(lv.A, lv.residual, lv.y);
         }
 
-        while(l < N) {
+        while(lv.N < N) {
             interpolate(A, e);
             smooth(A, residual);
-            l = e.length;
         }
 
         return Algorithms.backSubstitution(N-1, A, residual);
     }
 
-    private void restrict(double[][] A, double[] v){
-        int half  =  (int) Math.floor(v.length / 2);
-        int size = v.length - half;
+    private Level restrict(Level level){
+        int half  =  (int) Math.floor(level.y.length / 2);
+        int size = level.y.length - half;
 
-        double[] rh  = new double[size];
-        double[][] ah = new double[size][size];
+        double[] y2  = new double[size];
+        double[][] a2 = new double[size][size];
+        double[] rh2 = new double[size];
 
-        for(int i = 0; i < v.length; i++){
+        for(int i = 0; i < level.y.length; i++){
             if(i % 2 != 0){
-                rh[i/2] = v[i];
+                y2[i/2] = level.y[i];
+                rh2[i/2] = level.residual[i];
 
-
-                for(int j = 0 ; j < A[0].length; j++){
+                for(int j = 0 ; j < level.A[0].length; j++){
                     if(j % 2 == 0) {
-                        ah[i/2][j/2] = A[i][j];
+                        a2[i/2][j/2] = level.A[i][j];
                     }
                 }
             }
         }
 
-        v = rh;
-        A = ah;
+        Level lv = new Level(a2, y2, rh2);
+
+        return lv;
     }
 
     private void interpolate(double[][] A, double[] v){
@@ -114,5 +113,22 @@ public class MultiGrid implements MatrixSolver {
      * */
     private double[] calculateResidual(double[][] A, double[] x, double[] b) {
         return MatrixUtil.subtractVectors(MatrixUtil.multiplyMatrixByVector(A, x), b);
+    }
+
+
+    private class Level{
+        public double[][] A;
+        public double[] y;
+        public double residual[];
+
+        public int N;
+
+        public Level(double[][] A, double[] y, double[] residual){
+            this.A = A;
+            this.y = y;
+            this.residual = residual;
+
+            this.N = this.residual.length;
+        }
     }
 }
