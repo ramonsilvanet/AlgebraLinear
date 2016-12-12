@@ -32,49 +32,55 @@ public class MultiGrid implements MatrixSolver {
 
         double[] residual = calculateResidual(A, e, b);
 
-        smooth(A, e, TWICE);
+        residual = smooth(A, e, TWICE);
 
         int it = N;
 
         Level lv = new Level(A, b, e);
 
         while(it > 1) {
-            lv = restrict(A, b, e);
-            smooth(lv.A, lv.y);
-            it = lv.N;
+            lv = restrict(lv.A, lv.y, lv.residual);
+            lv.residual = smooth(lv.A, lv.y);
+            it = lv.residual.length;
         }
 
         while(it < N) {
             lv = interpolate(lv.A, lv.y, lv.residual);
-            smooth(A, residual);
-
+            lv.residual = smooth(A, residual);
+            it = lv.residual.length;
         }
 
-        return Algorithms.backSubstitution(N-1, A, residual);
+        return Algorithms.backSubstitution(N-1, lv.A, lv.residual);
     }
 
     private Level restrict(double[][] A, double[] b, double[] e){
-        int half  =  (int) Math.floor(e.length / 2);
-        int size = e.length - half;
+        int half  =  (int) Math.ceil(e.length / 2);
+
+        int size;
+        if(e.length %2 == 0){
+            size = e.length - half;
+        } else {
+            size = (e.length - half) - 1;
+        }
 
         double[] b2  = new double[size];
         double[][] a2 = new double[size][size];
         double[] rh2 = new double[size];
 
-        for(int i = 0; i < e.length; i++){
-            if(i % 2 != 0){
+        for(int i = 0; i < e.length -1; i++){
+            if(i%2 == 0){
                 b2[i/2] = b[i];
                 rh2[i/2] = e[i];
 
-                for(int j = 0 ; j < A[0].length; j++){
-                    if(j % 2 == 0) {
+                for(int j = 0; j< e.length - 1; j++){
+                    if(j%2==0){
                         a2[i/2][j/2] = A[i][j];
                     }
                 }
             }
         }
 
-        Level lv = new Level(a2, b, rh2);
+        Level lv = new Level(a2, b2, rh2);
         return lv;
     }
 
@@ -85,7 +91,7 @@ public class MultiGrid implements MatrixSolver {
         if(r.length % 2 == 0){
             size = r.length * 2;
         } else {
-            size = (r.length * 2) - 1;
+            size = (r.length * 2) + 1;
         }
 
         double[] rh = new double[size];
@@ -110,7 +116,7 @@ public class MultiGrid implements MatrixSolver {
             }
         }
 
-        Level fine = new Level(A, bh, rh);
+        Level fine = new Level(Ah, bh, rh);
         return fine;
 
     }
