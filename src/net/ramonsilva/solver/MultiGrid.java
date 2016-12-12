@@ -3,6 +3,7 @@ package net.ramonsilva.solver;
 import net.ramonsilva.Matrix;
 import net.ramonsilva.util.Algorithms;
 import net.ramonsilva.util.MatrixUtil;
+import sun.util.resources.cldr.ewo.LocaleNames_ewo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,67 +34,84 @@ public class MultiGrid implements MatrixSolver {
 
         smooth(A, e, TWICE);
 
-        Level lv = new Level(A, e, residual);
+        int it = N;
 
-        while(lv.N > 1) {
-            lv = restrict(lv);
+        Level lv = new Level(A, b, e);
+
+        while(it > 1) {
+            lv = restrict(A, b, e);
             smooth(lv.A, lv.y);
-            residual = calculateResidual(lv.A, lv.residual, lv.y);
+            it = lv.N;
         }
 
-        while(lv.N < N) {
-            interpolate(A, e);
+        while(it < N) {
+            lv = interpolate(lv.A, lv.y, lv.residual);
             smooth(A, residual);
+
         }
 
         return Algorithms.backSubstitution(N-1, A, residual);
     }
 
-    private Level restrict(Level level){
-        int half  =  (int) Math.floor(level.y.length / 2);
-        int size = level.y.length - half;
+    private Level restrict(double[][] A, double[] b, double[] e){
+        int half  =  (int) Math.floor(e.length / 2);
+        int size = e.length - half;
 
-        double[] y2  = new double[size];
+        double[] b2  = new double[size];
         double[][] a2 = new double[size][size];
         double[] rh2 = new double[size];
 
-        for(int i = 0; i < level.y.length; i++){
+        for(int i = 0; i < e.length; i++){
             if(i % 2 != 0){
-                y2[i/2] = level.y[i];
-                rh2[i/2] = level.residual[i];
+                b2[i/2] = b[i];
+                rh2[i/2] = e[i];
 
-                for(int j = 0 ; j < level.A[0].length; j++){
+                for(int j = 0 ; j < A[0].length; j++){
                     if(j % 2 == 0) {
-                        a2[i/2][j/2] = level.A[i][j];
+                        a2[i/2][j/2] = A[i][j];
                     }
                 }
             }
         }
 
-        Level lv = new Level(a2, y2, rh2);
-
+        Level lv = new Level(a2, b, rh2);
         return lv;
     }
 
-    private void interpolate(double[][] A, double[] v){
+    private Level interpolate(double[][] A, double[] b, double[] r){
 
         int size;
 
-        if(v.length % 2 == 0){
-            size = v.length * 2;
+        if(r.length % 2 == 0){
+            size = r.length * 2;
         } else {
-            size = (v.length * 2) - 1;
+            size = (r.length * 2) - 1;
         }
 
-        double[] r = new double[size];
+        double[] rh = new double[size];
+        double[] bh = new double[size];
+        double[][] Ah = new double[size][size];
 
         for(int i = 0 ; i < size; i ++){
             if(i % 2 == 0){
-                r[i] = v[i];
+                rh[i] = r[i];
+                b[i] = b[i];
             } else {
-                r[i] = (v[i] + v[i-1]) / 2;
+                rh[i] = (r[i] + r[i-1]) / 2;
+                bh[i] = (b[i] + b[i-1]) / 2;
+            }
+
+            for(int j = 0 ; j < size; j++){
+                if(i % 2 == 0) {
+                    Ah[i][j] = A[i][j];
+                } else {
+                    Ah[i][j] = (A[i][j] + A[i-1][j-1]) / 2;
+                }
             }
         }
+
+        Level fine = new Level(A, bh, rh);
+        return fine;
 
     }
 
