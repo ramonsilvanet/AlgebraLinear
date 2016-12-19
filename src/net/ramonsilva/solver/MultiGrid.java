@@ -1,12 +1,7 @@
 package net.ramonsilva.solver;
 
 import net.ramonsilva.Matrix;
-import net.ramonsilva.util.Algorithms;
 import net.ramonsilva.util.MatrixUtil;
-import sun.util.resources.cldr.ewo.LocaleNames_ewo;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class MultiGrid implements MatrixSolver {
