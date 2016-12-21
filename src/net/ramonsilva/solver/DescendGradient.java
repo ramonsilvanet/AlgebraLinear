@@ -71,5 +71,4 @@ public class DescendGradient implements MatrixSolver {
 
         return Math.sqrt(sum);
     }
-
 }

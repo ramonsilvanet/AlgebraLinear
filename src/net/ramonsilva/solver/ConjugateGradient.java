@@ -69,7 +69,26 @@ public class ConjugateGradient implements MatrixSolver {
             residualT = MatrixUtil.transpose(residual);
             delta = MatrixUtil.multiplyMatrixByVector(residualT,residual);
             double beta = delta[0] / tempDelta[0];
-            d = VectorUtil.addTwoVectors(residual, MatrixUtil.multiplyScalarByVector(beta, d));
+
+            double conjugateCondition = 0;
+
+            if(k  >= 1 ){
+                conjugateCondition = MatrixUtil.multiplyMatrixByVector(residualT, y)[0];
+
+                if(conjugateCondition < EPSILON){
+                    conjugateCondition = 0.0;
+                }
+            }
+
+            if(conjugateCondition > 0){
+                d = VectorUtil.addTwoVectors(residual, MatrixUtil.multiplyScalarByVector(beta, d));
+            } else {
+                double lambda = calculateLambda(residual, y, d, k);
+                d = VectorUtil.addTwoVectors(
+                        MatrixUtil.multiplyScalarByVector(lambda, residual),
+                        MatrixUtil.multiplyScalarByVector(beta, d));
+            }
+
 
             k++;
 
@@ -77,6 +96,23 @@ public class ConjugateGradient implements MatrixSolver {
 
         return c;
     }
+
+    private double calculateLambda(double[] residual, double[] y, double[] d, int k) {
+        double lambda;
+
+        double[][] deltaT = MatrixUtil.transpose(d);
+        double[][] residualT = MatrixUtil.transpose(residual);
+
+        double rNorm = normalize(residual);
+
+        lambda = 1 / MatrixUtil.multiplyMatrixByVector(deltaT, y)[0];
+        lambda *=  MatrixUtil.multiplyMatrixByVector(residualT, d)[0];
+        lambda *= (1/rNorm);
+        lambda *= MatrixUtil.multiplyMatrixByVector(residualT, y)[0];
+
+        return lambda + 1;
+    }
+
 
     private double normalize(double[] x){
         double sum = 0.0;

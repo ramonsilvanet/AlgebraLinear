@@ -331,4 +331,9 @@ public class MatrixUtil {
 
         return false;
     }
+
+    public static Matrix copy(Matrix m){
+        final Matrix mtx = new Matrix(m.getData(), m.getIndependentTerms());
+        return mtx;
+    }
 }

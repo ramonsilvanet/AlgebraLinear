@@ -19,16 +19,14 @@ public class MultiGrid implements MatrixSolver {
 
         double[][] A = matrix.getData();
         double[] b = matrix.getIndependentTerms();
-        int N = matrix.getLines();
+        int L = matrix.getLines();
 
-        double[] guess = new double[N];
-        for(int i = 0; i < N; i++) guess[i] = 1;
+        double[] u = new double[L];
+        for(int i = 0; i < L; i++) u[i] = 1;
 
-        double[] res = calculateResidual(A, guess, b);
 
-        return MatrixUtil.subtractVectors(guess, res);
+       return new double[L];
     }
-
 
     /**
      * R = v - Ax
