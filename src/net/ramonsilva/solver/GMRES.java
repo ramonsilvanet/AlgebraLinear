@@ -40,14 +40,12 @@ public class GMRES implements MatrixSolver{
 
         double[] x = new double[N];
 
-        //  Find q_0 = v/|v|
         double norm = VectorUtil.Norm2(b);
         double[][] Q = new double[N][N];
         for (int i = 0; i < N; i++) {
             Q[i][0] = b[i] / norm;
         }
 
-        // (1) initialize all matrices
         double[][] H = new double[N][N];
         double[][] Omega = new double[N][N];
         double[][] R = new double[N][N];
@@ -55,13 +53,10 @@ public class GMRES implements MatrixSolver{
         //Iteractions
         do {
 
-            // (2.1) step of Arnoldi iteration
             Arnoldi.iterate(k, A, Q, H);
 
-            // (2.2) least squares
             double[] y = Algorithms.leastSquares(k, b, H, Omega, R);
 
-            // (2.3) compute approximate solution
             for (int i = 0; i < N; i++) {
                 x[i] = 0;
 

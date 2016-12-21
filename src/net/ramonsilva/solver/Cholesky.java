@@ -3,9 +3,6 @@ package net.ramonsilva.solver;
 import net.ramonsilva.Matrix;
 import net.ramonsilva.util.MatrixUtil;
 
-/**
- * Created by ramonsilva on 22/10/16.
- */
 public class Cholesky implements MatrixSolver {
     @Override
     public double[] solve(Matrix matrix) {
