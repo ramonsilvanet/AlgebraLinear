@@ -47,6 +47,14 @@ public class GaussElimination implements MatrixSolver {
         }
 
         // back substitution
-        return Algorithms.backSubstitution(LINES-1, A, b);
+        double[] x = new double[TERMS];
+        for (int i = TERMS - 1; i >= 0; i--) {
+            double sum = 0.0;
+            for (int j = i + 1; j < TERMS; j++) {
+                sum += A[i][j] * x[j];
+            }
+            x[i] = (b[i] - sum) / A[i][i];
+        }
+        return x;
     }
 }
