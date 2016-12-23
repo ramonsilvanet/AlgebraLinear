@@ -34,4 +34,18 @@ public class CholeskyTest {
         assertEquals( 1, solution[2], EPSILON);
         assertEquals(-1, solution[3], EPSILON);
     }
+
+    @Test
+    public void testCholeskySolverThreeByThree(){
+        double[][] data = { { 1, 1, 0 }, { 1, 2, -1 }, { 0, -1, 3} };
+        double[] indepentendTerms = {2, 1, 5};
+        Matrix m = new Matrix(data, indepentendTerms);
+
+        MatrixSolver solver = new Cholesky();
+        double[] solution = solver.solve(m);
+
+        assertEquals(1, solution[0], EPSILON);
+        assertEquals(1, solution[1], EPSILON);
+        assertEquals(2, solution[2], EPSILON);
+    }
 }

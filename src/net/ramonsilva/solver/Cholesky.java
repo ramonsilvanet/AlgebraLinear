@@ -47,11 +47,13 @@ public class Cholesky implements MatrixSolver {
         //  Perform substitution Ly=v
         double[] y = new double[TERMS];
         for(int i = 0; i < TERMS; i++) {
-            y[i] = b[i] / LOWER[i][i];
+            double sum = 0.0;
 
             for(int k = 0; k < i; k++){
-                y[i] -= y[k] * LOWER[i][k];
+                sum += y[k] * LOWER[i][k];
             }
+
+            y[i] = (b[i] - sum) / LOWER[i][i];
         }
 
        //Back substituition
@@ -67,5 +69,4 @@ public class Cholesky implements MatrixSolver {
 
         return x;
     }
-
 }
