@@ -3,15 +3,14 @@ package net.ramonsilva.solver;
 import net.ramonsilva.Matrix;
 import net.ramonsilva.util.MatrixUtil;
 
-/**
- * Created by ramonsilva on 24/10/16.
- */
+
 public class SORMethod implements MatrixSolver {
     private static final double EPSILON = 1e-10;
     private static int DEFAULT_INTERACTIONS = 100;
 
     private int k = 0;
     private int interactionsLimit = 0;
+    private static double OMEGA = 1.05;
 
     public SORMethod(){
         this(DEFAULT_INTERACTIONS);
@@ -37,7 +36,7 @@ public class SORMethod implements MatrixSolver {
 
 
         double[] c = new double[N];
-        double[] x = SOR(A, b, c, 1.9);
+        double[] x = SOR(A, b, c, OMEGA);
 
         return x;
     }
