@@ -10,7 +10,7 @@ public class VectorUtil {
         double[] z = new double[N];
 
         for(int i = 0; i < N; i++){
-            z[i] = x[i] * y[i];
+            z[i] = x[i] + y[i];
         }
 
         return z;
@@ -60,6 +60,17 @@ public class VectorUtil {
         }
 
         return c;
+    }
+
+    public static void print(double[] A) {
+
+        int numLines = A.length;
+
+        System.out.print("[");
+        for (int i = 0; i < numLines; i++) {
+            System.out.printf("%6.2f ", A[i]);
+        }
+        System.out.print("]");
     }
 }
 

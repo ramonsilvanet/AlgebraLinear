@@ -50,4 +50,18 @@ public class CrammerRuleSolverTest {
         assertEquals(0.5, solution[2], 0.0);
         assertEquals(3, solution[3], 0.0);
     }
+
+    @Test
+    public void testCrammerRuleSolver(){
+        double[][] data = { { 1, -1, 2}, { -1, 5, -4}, { 2, -4, 6} };
+        double[] indepentendTerms = {0, 1 , 0};
+        Matrix m = new Matrix(data, indepentendTerms);
+
+        MatrixSolver solver = new CrammerRule();
+        double[] solution = solver.solve(m);
+
+        assertEquals(-0.5, solution[0], 0.0);
+        assertEquals(0.5, solution[1], 0.0);
+        assertEquals(0.5, solution[2], 0.0);
+    }
 }

@@ -336,4 +336,51 @@ public class MatrixUtil {
         final Matrix mtx = new Matrix(m.getData(), m.getIndependentTerms());
         return mtx;
     }
+
+    public static boolean isPositiveDefinite(double[][] A) {
+
+        int COLUMNS = A[0].length;
+        double[][] LOWER = new double[COLUMNS][COLUMNS];
+
+
+        if(!isSquare(A)) return false;
+
+        for(int i = 0 ; i < COLUMNS; i++){
+            for(int j = 0; j <= i; j++){
+
+                double sum = 0.0;
+                for(int k = 0;k < j; k++){
+                    sum += A[i][k] * A[i][k];
+                }
+
+                if(i == j){
+                    LOWER[i][i] = Math.sqrt(A[i][i] - sum);
+                } else {
+                    LOWER[i][j] = 1.0 / LOWER[j][j] * (A[i][j] - sum);
+                }
+            }
+
+            if(LOWER[i][i] <= 0){
+                throw new RuntimeException("Matrix is not positive definte");
+            }
+        }
+
+        return true;
+    }
+
+    public static void print(double[][] A) {
+
+        int numLines = A.length;
+        int numCols = A[0].length;
+
+        for (int i = 0; i < numLines; i++) {
+            System.out.print("[");
+
+            for (int j = 0; j < numCols; j++) {
+                System.out.printf("%6.2f ", A[i][j]);
+            }
+
+            System.out.println("]");
+        }
+    }
 }

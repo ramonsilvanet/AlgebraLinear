@@ -4,6 +4,10 @@ import net.ramonsilva.Matrix;
 import net.ramonsilva.util.MatrixUtil;
 import net.ramonsilva.util.VectorUtil;
 
+import static net.ramonsilva.util.VectorUtil.Norm2;
+import static net.ramonsilva.util.VectorUtil.addTwoVectors;
+import static net.ramonsilva.util.VectorUtil.normalize;
+
 /**
  * Created by ramonsilva on 29/10/16.
  */
@@ -26,8 +30,6 @@ public class DescendGradient implements MatrixSolver {
 
     @Override
     public double[] solve(Matrix matrix) {
-
-
         double[][] A = matrix.getData();
         double[] b = matrix.getIndependentTerms();
         int N = matrix.getLines();
@@ -36,39 +38,47 @@ public class DescendGradient implements MatrixSolver {
             throw new RuntimeException("Matrix is not Square");
         }
 
-        if(!MatrixUtil.isDiagonalDominant(A)){
-            throw new RuntimeException("Matrix is not diagonal dominant");
+        if(!MatrixUtil.isPositiveDefinite(A)){
+            throw new RuntimeException("Matrix is not positive definite");
         }
 
         double[] c = new double[N];
-        double[] y = MatrixUtil.multiplyMatrixByVector(A, c);
+        double[] res = VectorUtil.minus(b, MatrixUtil.multiplyMatrixByVector(A, c));
 
-        double[] residual =  MatrixUtil.subtractVectors(b,MatrixUtil.multiplyMatrixByVector(A, c));
+        while(VectorUtil.Norm2(res) > EPSILON && k < interactionsLimit){
 
+            double[][] resT = MatrixUtil.transpose(res);
+            double[] Ar = MatrixUtil.multiplyMatrixByVector(A, res);
 
-        while(normalize(residual) > EPSILON && k < interactionsLimit){
-            double[][] residualT = MatrixUtil.transpose(residual);
+            double alpha = multiply(resT, res)[0] / multiply(resT, Ar)[0];
 
-            double[][] Ar = MatrixUtil.multiply(A, residualT);
-            double alpha = MatrixUtil.multiplyMatrixByVector(residualT, residual)[0] / MatrixUtil.multiplyMatrixByMatrix(residualT, Ar)[0];
-
-            c = VectorUtil.addTwoVectors(c, MatrixUtil.multiplyScalarByVector(alpha, residual));
-
+            c = addTwoVectors(c, MatrixUtil.multiplyScalarByVector(alpha, res));
+            res = VectorUtil.minus(b, MatrixUtil.multiplyMatrixByVector(A, c));
             k++;
-            residual = MatrixUtil.subtractVectors(b,MatrixUtil.multiplyMatrixByVector(A, c));
         }
 
+        if(Norm2(res) > EPSILON){
+            System.out.println("Not Converged");
+        }else {
+            System.out.println("Converge after " + k + " interactions.");
+        }
         return c;
     }
 
-    private double normalize(double[] x){
-        double sum = 0.0;
-        int N = x.length;
+    private double[] multiply(double[][] A, double[] x){
 
-        for (int i = 0 ; i < N; i++){
-            sum += Math.pow(x[i], 2);
+        int m = A[0].length;
+        int n = x.length;
+
+        double[] y = new double[m];
+
+        for(int i = 0; i < m; i++){
+            for(int j = 0; j < n; j++){
+                y[i] += A[j][i] * x[j];
+            }
         }
 
-        return Math.sqrt(sum);
+        return y;
     }
+
 }
