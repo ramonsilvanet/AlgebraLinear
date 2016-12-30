@@ -36,65 +36,45 @@ public class ConjugateGradient implements MatrixSolver {
             throw new RuntimeException("Matrix is not Square");
         }
 
-        if(!MatrixUtil.isDiagonalDominant(A)){
-            throw new RuntimeException("Matrix is not diagonal dominant");
+        if(!MatrixUtil.isPositiveDefinite(A)){
+            throw new RuntimeException("Matrix is not positive definite");
         }
 
-        double[] c = new double[N];
-        double[] y = MatrixUtil.multiplyMatrixByVector(A, c);
+        int k = 0;
 
-        double[] residual =  MatrixUtil.subtractVectors(b,MatrixUtil.multiplyMatrixByVector(A, c));
+        double[] guess = new double[N];
+        double[][] d = new double[interactionsLimit][N];
+        double[][] r = new double[interactionsLimit][N];
+        double[][] x = new double[interactionsLimit][N];
+        double[] alpha = new double[interactionsLimit];
 
-        double[] d = new double[residual.length];
-        System.arraycopy(residual, 0, d, 0, residual.length);
+        d[k] = MatrixUtil.subtractVectors(b , multiply(A, guess));
+        r[k] = d[k];
+        x[k] = guess;
 
-        double[][] residualT = MatrixUtil.transpose(residual);
-        double[] delta = MatrixUtil.multiplyMatrixByVector(residualT,residual);
+        while(k < (interactionsLimit - 1) && normalize(r[k]) > EPSILON ){
+            double[][] rT = MatrixUtil.transpose(r[k]);
+            double[][] dT = MatrixUtil.transpose(d[k]);
 
-        while(normalize(residual) > EPSILON && k < interactionsLimit){
+            double[] Ad = multiply(A, d[k]);
+            alpha[k] = (1 / multiply(dT, Ad)[0]) * multiply(rT, r[k])[0];
 
-            double[] q = MatrixUtil.multiplyMatrixByVector(A, d);
-            double[][] dTrans = MatrixUtil.transpose(d);
-            double alpha = delta[0] / MatrixUtil.multiplyMatrixByVector(dTrans, q)[0];
-            c = VectorUtil.addTwoVectors(c, MatrixUtil.multiplyScalarByVector(alpha, q));
+            x[k + 1] = VectorUtil.addTwoVectors(x[k], MatrixUtil.multiplyScalarByVector(alpha[k], d[k]));
+            r[k + 1] = MatrixUtil.subtractVectors(r[k], MatrixUtil.multiplyScalarByVector(alpha[k], Ad));
 
-            if(k % 50 == 0){
-                residual = MatrixUtil.subtractVectors(b, MatrixUtil.multiplyMatrixByVector(A, c));
-            } else {
-                residual = MatrixUtil.subtractVectors(residual, MatrixUtil.multiplyScalarByVector(alpha, q));
-            }
+            double beta = 1 / multiply(rT, r[k])[0];
+            rT = MatrixUtil.transpose(r[k + 1]);
+            beta *= multiply(rT, r[k + 1])[0];
 
-            double[] tempDelta = new double[delta.length];
-            System.arraycopy(delta, 0, tempDelta, 0, delta.length);
-            residualT = MatrixUtil.transpose(residual);
-            delta = MatrixUtil.multiplyMatrixByVector(residualT,residual);
-            double beta = delta[0] / tempDelta[0];
-
-            double conjugateCondition = 0;
-
-            if(k  >= 1 ){
-                conjugateCondition = MatrixUtil.multiplyMatrixByVector(residualT, y)[0];
-
-                if(conjugateCondition < EPSILON){
-                    conjugateCondition = 0.0;
-                }
-            }
-
-            if(conjugateCondition > 0){
-                d = VectorUtil.addTwoVectors(residual, MatrixUtil.multiplyScalarByVector(beta, d));
-            } else {
-                double lambda = calculateLambda(residual, y, d, k);
-                d = VectorUtil.addTwoVectors(
-                        MatrixUtil.multiplyScalarByVector(lambda, residual),
-                        MatrixUtil.multiplyScalarByVector(beta, d));
-            }
-
+            double[] betaD = MatrixUtil.multiplyScalarByVector(beta, d[k]);
+            d[k + 1] = VectorUtil.addTwoVectors(r[k + 1], betaD);
 
             k++;
-
         }
 
-        return c;
+        System.out.println("Gradient Conj converges in " + (k+1) + " interactions.");
+
+        return x[k];
     }
 
     private double calculateLambda(double[] residual, double[] y, double[] d, int k) {
@@ -105,10 +85,10 @@ public class ConjugateGradient implements MatrixSolver {
 
         double rNorm = normalize(residual);
 
-        lambda = 1 / MatrixUtil.multiplyMatrixByVector(deltaT, y)[0];
-        lambda *=  MatrixUtil.multiplyMatrixByVector(residualT, d)[0];
+        lambda = 1 / multiply(deltaT, y)[0];
+        lambda *=  multiply(residualT, d)[0];
         lambda *= (1/rNorm);
-        lambda *= MatrixUtil.multiplyMatrixByVector(residualT, y)[0];
+        lambda *= multiply(residualT, y)[0];
 
         return lambda + 1;
     }
@@ -123,5 +103,21 @@ public class ConjugateGradient implements MatrixSolver {
         }
 
         return Math.sqrt(sum);
+    }
+
+    private double[] multiply(double[][] A, double[] x){
+
+        int m = A[0].length;
+        int n = x.length;
+
+        double[] y = new double[m];
+
+        for(int i = 0; i < m; i++){
+            for(int j = 0; j < n; j++){
+                y[i] += A[j][i] * x[j];
+            }
+        }
+
+        return y;
     }
 }

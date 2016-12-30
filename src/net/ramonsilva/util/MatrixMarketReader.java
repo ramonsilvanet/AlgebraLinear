@@ -1,56 +1,44 @@
 package net.ramonsilva.util;
 
 import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.FileReader;
 
 /**
- * Created by ramonsilva on 14/11/16.
+ * Created by ramonsilva on 30/12/16.
  */
 public class MatrixMarketReader {
 
-    public class SparseMatrixEx2 {
-        private String typecode;
-        private double[][] matrix;
 
-        public void read(String filename) throws java.io.IOException {
-            InputStream s = SparseMatrixEx2.class.getResourceAsStream(filename);
-            BufferedReader br = new BufferedReader(new InputStreamReader(s));
+    private int columns;
+    private int rows;
+    private int nonZeros;
 
-            // read type code initial line
-            String line = br.readLine();
-            typecode = line;
+    private double[][] data;
 
-            // read comment lines if any
-            boolean comment = true;
-            while (comment) {
-                line = br.readLine();
-                comment = line.startsWith("%");
-            }
+    private String[] lines;
 
-            // line now contains the size information which needs to be parsed
-            String[] str = line.split("( )+");
-            int nRows = (Integer.valueOf(str[0].trim())).intValue();
-            int nColumns = (Integer.valueOf(str[1].trim())).intValue();
-            int nNonZeros = (Integer.valueOf(str[2].trim())).intValue();
+    public MatrixMarketReader(String file_name){
+        readContent(file_name);
+    }
 
-            // now we're into the data section
-            matrix = new double[nRows][nColumns];
-            while (true) {
-                line = br.readLine();
-                if (line == null) break;
-                str = line.split("( )+");
-                int i = (Integer.valueOf(str[0].trim())).intValue();
-                int j = (Integer.valueOf(str[1].trim())).intValue();
-                double x = (Double.valueOf(str[2].trim())).doubleValue();
-                matrix[i - 1][j - 1] = x;
-            }
-            br.close();
-        }
+    private void readContent(String file_name) {
+        BufferedReader br = null;
+        FileReader fr = null;
 
-        public String getTypeCode() {
-            return this.typecode;
+        try{
+            fr = new FileReader(file_name);
+            br = new BufferedReader(fr);
+
+            String sCurrentLine;
+
+
+
+        } catch (Exception ex) {
+
         }
     }
+
+
 }
+
 
