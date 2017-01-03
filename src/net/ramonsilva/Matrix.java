@@ -51,6 +51,7 @@ public class Matrix {
     }
 
     public void print() {
+
         for (int i = 0; i < numLines; i++) {
             for (int j = 0; j < numCols; j++) {
                 System.out.printf("%6.2f ", this.data[i][j]);
@@ -59,6 +60,8 @@ public class Matrix {
             System.out.printf("= %6.2f ", this.independentTerms[i]);
             System.out.println();
         }
+
+        System.out.println("Matrix with " + this.numLines + " rows and " + numCols + " columns");
     }
 
 

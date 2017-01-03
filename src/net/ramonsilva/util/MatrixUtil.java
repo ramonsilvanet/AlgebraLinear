@@ -122,7 +122,7 @@ public class MatrixUtil {
         return true;
     }
 
-    // is symmetric
+    // is square
     public static boolean isSquare(double[][] A) {
         int N = A.length;
         for (int i = 0; i < N; i++) {

@@ -75,7 +75,7 @@ public class GaussJacobi implements MatrixSolver {
 
 
         if(conv || k == interactionsLimit ){
-            System.out.println("Converge in " + k + " interactions.");
+            System.out.println("Gauss-Jacobi Converge in " + k + " interactions.");
             return c;
 
         } else {

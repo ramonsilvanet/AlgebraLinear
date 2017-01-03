@@ -73,7 +73,7 @@ public class GaussSiedel implements MatrixSolver {
         }
 
         if(conv || k == interactionsLimit ){
-            System.out.println("Converge in " + k + " interactions.");
+            System.out.println("Gauss-Siedel Converge in " + k + " interactions.");
             return c;
 
         } else {
