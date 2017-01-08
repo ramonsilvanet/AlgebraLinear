@@ -78,7 +78,7 @@ public class SORMethod implements MatrixSolver {
 
         }
 
-        System.out.print("Converge in " + k + " interactions");
+        System.out.print("Method SOR Converge in " + k + " interactions");
 
         return c;
     }

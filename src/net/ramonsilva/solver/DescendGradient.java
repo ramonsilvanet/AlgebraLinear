@@ -60,7 +60,7 @@ public class DescendGradient implements MatrixSolver {
         if(Norm2(res) > EPSILON){
             System.out.println("Not Converged");
         }else {
-            System.out.println("Converge after " + k + " interactions.");
+            System.out.println("Descend Gradient Converge after " + k + " interactions.");
         }
         return c;
     }

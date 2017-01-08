@@ -37,9 +37,15 @@ public class MultiGridSolverTest {
         MatrixSolver solver = new MultiGrid();
         double[] solution = solver.solve(m);
 
-        assertEquals(1, solution[0], EPSILON);
-        assertEquals(1, solution[1], EPSILON);
-        assertEquals(2, solution[2], EPSILON);
+        assertEquals(0.5, solution[0], EPSILON);
+        assertEquals(0.125, solution[1], EPSILON);
+        assertEquals(1.75, solution[2], EPSILON);
+        assertEquals(1.03125, solution[3], EPSILON);
+        assertEquals(0.0625, solution[4], EPSILON);
+        assertEquals(2.0703125, solution[5], EPSILON);
+        assertEquals(1.765625, solution[6], EPSILON);
+        assertEquals(1.3828125, solution[7], EPSILON);
+        assertEquals(3.421875, solution[8], EPSILON);
     }
 
 }

@@ -2,6 +2,7 @@ package net.ramonsilva.solver;
 
 import net.ramonsilva.Matrix;
 import net.ramonsilva.util.MatrixUtil;
+import net.ramonsilva.util.VectorUtil;
 
 
 public class MultiGrid implements MatrixSolver {
@@ -14,17 +15,13 @@ public class MultiGrid implements MatrixSolver {
 
     @Override
     public double[] solve(Matrix matrix) {
+        //Step 1 : Criar grids
+
+        System.out.println("Multigrid [");
 
         double[][] A = matrix.getData();
         double[] b = matrix.getIndependentTerms();
         int N = matrix.getLines();
-
-        //Initial chute
-        double[] u = new double[N];
-        for(int i = 0; i < N; i++) u[i] = 1;
-
-        //Step 1 : Criar grids
-
 
         //Step 2 : Resolva usando uma iteração de Guass-Siedel
         double[] omega = smooth(A, b);
@@ -34,19 +31,24 @@ public class MultiGrid implements MatrixSolver {
 
         //Step 4 : Transferir o residuo para o grid mais grosso
 
-        int half  =  (int) Math.floor(N / 2);
-        int NC = N - half;
+        double[] rc = restrict(rf);
+        double[][] ac = restrict(A);
 
-        double[] rc = sweep(NC, rf, u);
-        double[] uc = restrict(N, u, rf, NC, rc);
 
         //Step 5 : Resolva
-        //Step 6 : Interpola
-        //Step 7 :
+        double[] omegac = smooth(ac, rc, 2);
+
+        //Step 6 : Prolongamento
+        double[]  omegaCF = interpolate(omegac);
 
 
+        //Step 7 : Atualiza a solucao
+        omega = VectorUtil.addTwoVectors(omega, omegaCF);
 
-        return new double[0];
+        System.out.println("]");
+
+
+        return omega;
     }
 
     private double[] restrict(double[] fine){
@@ -64,6 +66,82 @@ public class MultiGrid implements MatrixSolver {
         return restricted;
     }
 
+    private double[][] restrict(double[][] matrix){
+
+        int half  =  (int) Math.floor(matrix.length / 2);
+        int size = matrix.length - half;
+
+        double[][] a2 = new double[size][size];
+
+        for(int i = 0; i < matrix.length; i++){
+            if(i % 2 == 0){
+                for(int j = 0 ; j < matrix[0].length; j++){
+                    if(j % 2 == 0) {
+                        a2[i/2][j/2] = matrix[i][j];
+                    }
+                }
+            }
+        }
+
+        return a2;
+    }
+
+
+    private double[] interpolate(double[] coarse){
+        int size;
+
+        if(coarse.length % 2 == 0){
+            size = coarse.length * 2;
+        } else {
+            size = (coarse.length * 2) - 1;
+        }
+
+        double[] fine = new double[size];
+        int j = 0;
+
+        for(int i = 0 ; i < size; i ++) {
+            if (i % 2 == 0) {
+                j = i/2;
+                fine[i] = coarse[j];
+            } else {
+                fine[i] = (coarse[j] + coarse[j+1]) / 2;
+            }
+        }
+
+        return fine;
+    }
+
+    private double[][] interpolate(double[][] coarse){
+        int size;
+
+        if(coarse.length % 2 == 0){
+            size = coarse.length * 2;
+        } else {
+            size = (coarse.length * 2) - 1;
+        }
+
+        double[][] fine = new double[size][size];
+        int k = 0;
+        int l = 0;
+        for(int i = 0 ; i < size; i ++){
+
+            if(i % 2 == 0) k = i / 2;
+
+            for(int j = 0 ; j < size; j++){
+
+                if(j % 2 == 0) l = j / 2;
+
+                if(i % 2 == 0) {
+                    fine[i][j] = coarse[k][l];
+                } else {
+                    fine[i][j] = (coarse[k][l] + coarse[k+1][l+1]) / 2;
+                }
+            }
+        }
+
+        return fine;
+    }
+
     /*private double[] interpolate(int NC, double[] UC, int NF, double[] UF){
         int ic;
         int iff;
@@ -79,7 +157,7 @@ public class MultiGrid implements MatrixSolver {
         }
 
         return UF;
-    }*/
+    }
 
     private double[] restrict(int NF, double[] UF, double[] RF, int NC, double[] RC){
 
@@ -98,7 +176,7 @@ public class MultiGrid implements MatrixSolver {
         RC[NC-1] = 0.0;
 
         return UC;
-    }
+    }*/
 
     /**
      * Gauss-Siedel
