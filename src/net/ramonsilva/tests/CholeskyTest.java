@@ -43,24 +43,4 @@ public class CholeskyTest {
         assertEquals(5, solution[2], EPSILON);
     }
 
-    @Test
-    public void testCholeskyFivebyFive(){
-        double[][] data = {
-                { 2.5791234, -0.31610442, -0.60484496, -0.7269189,  -0.4848828},
-                { -0.3161044, 2.20509109, 0.09002619, 0.8176088, 1.0030809 },
-                { -0.6048450, 0.09002619, 3.60547197, -0.4705657, -0.8378352 },
-                { -0.7269189, 0.81760883, -0.47056571, 3.9656424, 0.2176908 },
-                { -0.4848828, 1.00308087, -0.83783524, 0.2176908, 2.6446711}
-        };
-        double[] indepentendTerms = {5,4,3,2,1};
-        Matrix m = new Matrix(data, indepentendTerms);
-
-        MatrixSolver solver = new Cholesky();
-        double[] solution = solver.solve(m);
-
-        assertEquals(8, solution[0], EPSILON);
-        assertEquals(8, solution[1], EPSILON);
-        assertEquals(5, solution[2], EPSILON);
-    }
-
 }

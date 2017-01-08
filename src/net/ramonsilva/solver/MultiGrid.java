@@ -6,8 +6,6 @@ import net.ramonsilva.util.MatrixUtil;
 
 public class MultiGrid implements MatrixSolver {
 
-    private static final int ONCE = 1;
-    private static final int TWICE = 2;
 
     private MatrixSolver smoother;
 
@@ -25,77 +23,101 @@ public class MultiGrid implements MatrixSolver {
         double[] u = new double[N];
         for(int i = 0; i < N; i++) u[i] = 1;
 
-        double[] x = smooth(A, u, TWICE);
+        //Step 1 : Criar grids
 
-        double[] res = calculateResidual(A, b, x);
 
-        return res;
+        //Step 2 : Resolva usando uma iteração de Guass-Siedel
+        double[] omega = smooth(A, b);
+
+        //Step 3 : Calcular Residuo para o Grid mais fino
+        double[] rf = calculateResidual(A, b, omega);
+
+        //Step 4 : Transferir o residuo para o grid mais grosso
+
+        int half  =  (int) Math.floor(N / 2);
+        int NC = N - half;
+
+        double[] rc = sweep(NC, rf, u);
+        double[] uc = restrict(N, u, rf, NC, rc);
+
+        //Step 5 : Resolva
+        //Step 6 : Interpola
+        //Step 7 :
+
+
+
+        return new double[0];
     }
 
-    private Level restrict(double[][] A, double[] b, double[] e){
-        int half  =  (int) Math.floor(e.length / 2);
-        int size = e.length - half;
+    private double[] restrict(double[] fine){
+        int half  =  (int) Math.floor(fine.length / 2);
+        int size = fine.length - half;
 
-        double[] b2  = new double[size];
-        double[][] a2 = new double[size][size];
-        double[] rh2 = new double[size];
+        double[] restricted =  new double[size];
 
-        for(int i = 0; i < e.length; i++){
-            if(i % 2 != 0){
-                b2[i/2] = b[i];
-                rh2[i/2] = e[i];
-
-                for(int j = 0 ; j < A[0].length; j++){
-                    if(j % 2 == 0) {
-                        a2[i/2][j/2] = A[i][j];
-                    }
-                }
-            }
-        }
-
-        Level lv = new Level(a2, b, rh2);
-        return lv;
-    }
-
-    private Level interpolate(double[][] A, double[] b, double[] r){
-
-        int size;
-
-        if(r.length % 2 == 0){
-            size = r.length * 2;
-        } else {
-            size = (r.length * 2) - 1;
-        }
-
-        double[] rh = new double[size];
-        double[] bh = new double[size];
-        double[][] Ah = new double[size][size];
-
-        for(int i = 0 ; i < size; i ++){
+        for(int i = 0; i < fine.length; i++){
             if(i % 2 == 0){
-                rh[i] = r[i];
-                b[i] = b[i];
-            } else {
-                rh[i] = (r[i] + r[i-1]) / 2;
-                bh[i] = (b[i] + b[i-1]) / 2;
-            }
-
-            for(int j = 0 ; j < size; j++){
-                if(i % 2 == 0) {
-                    Ah[i][j] = A[i][j];
-                } else {
-                    Ah[i][j] = (A[i][j] + A[i-1][j-1]) / 2;
-                }
+                restricted[i/2] = fine[i];
             }
         }
 
-        Level fine = new Level(A, bh, rh);
-        return fine;
+        return restricted;
+    }
 
+    /*private double[] interpolate(int NC, double[] UC, int NF, double[] UF){
+        int ic;
+        int iff;
+
+        for ( ic = 0; ic < NC; ic++ ) {
+            iff = 2 * ic;
+            UF[iff] = UF[iff] + UC[ic];
+        }
+
+        for ( ic = 0; ic < NC - 1; ic++ ) {
+            iff = 2 * ic + 1;
+            UF[iff] = UF[iff] + 0.5 * ( UC[ic] + UC[ic+1] );
+        }
+
+        return UF;
+    }*/
+
+    private double[] restrict(int NF, double[] UF, double[] RF, int NC, double[] RC){
+
+        int ic;
+        int iff;
+
+        double[] UC = new double[NC];
+
+        RC[0] = 0.0;
+
+        for ( ic = 1; ic < NC - 1; ic++ ) {
+            iff = 2 * ic;
+            RC[ic] = 4.0 * ( RF[iff] + UF[iff-1] - 2.0 * UF[iff] + UF[iff+1] );
+        }
+
+        RC[NC-1] = 0.0;
+
+        return UC;
+    }
+
+    /**
+     * Gauss-Siedel
+     * */
+    private double[] sweep(int N, double[] R, double[] U){
+        int i;
+        double u_old;
+
+        for ( i = 1; i < N - 1; i++ )
+        {
+            u_old = U[i];
+            U[i] = 0.5 * ( U[i-1] + U[i+1] + R[i] );
+        }
+
+        return U;
     }
 
     private double[] smooth(double[][] A, double[] b){
-        return smooth(A, b,ONCE);
+        return smooth(A, b, 1);
     }
 
     private double[] smooth(double[][] A, double[] b, int times){
@@ -108,24 +130,7 @@ public class MultiGrid implements MatrixSolver {
     /**
      * R = v - Ax
      * */
-    private double[] calculateResidual(double[][] A, double[] x, double[] b) {
+    private double[] calculateResidual(double[][] A, double[] b, double[] x) {
         return MatrixUtil.subtractVectors(MatrixUtil.multiplyMatrixByVector(A, x), b);
-    }
-
-
-    private class Level{
-        public double[][] A;
-        public double[] y;
-        public double residual[];
-
-        public int N;
-
-        public Level(double[][] A, double[] y, double[] residual){
-            this.A = A;
-            this.y = y;
-            this.residual = residual;
-
-            this.N = this.residual.length;
-        }
     }
 }
