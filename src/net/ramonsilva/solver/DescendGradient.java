@@ -6,7 +6,6 @@ import net.ramonsilva.util.VectorUtil;
 
 import static net.ramonsilva.util.VectorUtil.Norm2;
 import static net.ramonsilva.util.VectorUtil.addTwoVectors;
-import static net.ramonsilva.util.VectorUtil.normalize;
 
 /**
  * Created by ramonsilva on 29/10/16.
