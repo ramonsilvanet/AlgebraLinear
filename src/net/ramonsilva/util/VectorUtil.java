@@ -72,5 +72,16 @@ public class VectorUtil {
         }
         System.out.print("]");
     }
+
+    public static void print(int[] A) {
+
+        int numLines = A.length;
+
+        System.out.print("[");
+        for (int i = 0; i < numLines; i++) {
+            System.out.printf("%d ", A[i]);
+        }
+        System.out.print("]");
+    }
 }
 

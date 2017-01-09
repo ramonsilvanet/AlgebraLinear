@@ -39,20 +39,6 @@ public class LUDecomposite implements MatrixSolver {
         //Find LU matrices
         for(int i = 0 ; i < LINES; i++){
 
-            double maxElement = Math.abs(UPPER[i][i]);
-            int max = i;
-
-            for (int k = i + 1; k < LINES; k++) {
-                if (Math.abs(UPPER[k][i]) > maxElement) {
-                    maxElement = Math.abs(UPPER[k][i]);
-                    max = k;
-                }
-            }
-
-            //swap rows
-            //double[] temp = UPPER[i]; UPPER[i] = UPPER[max]; UPPER[max] = temp;
-            //double   t    = v[i]; v[i] = v[max]; v[max] = t;
-
             //Subtract lines
             for (int k = i + 1; k < LINES; k++){
                 double c = (UPPER[k][i]) / UPPER[i][i];
