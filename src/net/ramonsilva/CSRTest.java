@@ -1,4 +1,4 @@
-package net.ramonsilva.util;
+package net.ramonsilva;
 
 import net.ramonsilva.CSRMatrix;
 

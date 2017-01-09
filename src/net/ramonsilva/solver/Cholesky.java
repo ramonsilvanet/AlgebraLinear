@@ -17,9 +17,10 @@ public class Cholesky implements MatrixSolver {
         if (!MatrixUtil.isSquare(A)) {
             throw new RuntimeException("Matrix não é quadrada");
         }
-        if (!MatrixUtil.isSymmetric(A)) {
-            throw new RuntimeException("Matrix nao é simetrica");
-        }
+
+        //if (!MatrixUtil.isSymmetric(A)) {
+        //    throw new RuntimeException("Matrix nao é simetrica");
+        //}
 
         double [][] LOWER = new double[LINES][COLUMNS];
         for(int i = 0 ; i < COLUMNS; i++){
@@ -33,7 +34,12 @@ public class Cholesky implements MatrixSolver {
                 if(i == j){
                     LOWER[i][i] = Math.sqrt(A[i][i] - sum);
                 } else {
-                    LOWER[i][j] = 1.0 / LOWER[j][j] * (A[i][j] - sum);
+                    double denominator = LOWER[j][j] * (A[i][j] - sum);
+                    if(denominator != 0) {
+                        LOWER[i][j] = 1.0 / LOWER[j][j] * (A[i][j] - sum);
+                    } else {
+                        LOWER[i][j] = 0.0;
+                    }
                 }
             }
 
