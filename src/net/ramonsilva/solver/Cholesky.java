@@ -14,6 +14,8 @@ public class Cholesky implements MatrixSolver {
         double[][] A = matrix.getData();
         double[] b   = matrix.getIndependentTerms();
 
+        double EPSILON = 0.0001;
+
         if (!MatrixUtil.isSquare(A)) {
             throw new RuntimeException("Matrix não é quadrada");
         }
@@ -59,7 +61,11 @@ public class Cholesky implements MatrixSolver {
                 sum += y[k] * LOWER[i][k];
             }
 
-            y[i] = (b[i] - sum) / LOWER[i][i];
+            if(LOWER[i][i] < EPSILON) {
+                y[i] = 0.0;
+            } else {
+                y[i] = (b[i] - sum) / LOWER[i][i];
+            }
         }
 
        //Back substituition
@@ -70,7 +76,12 @@ public class Cholesky implements MatrixSolver {
             for (int j = i + 1; j < TERMS; j++) {
                 sum += TRANSPOSED[i][j] * x[j];
             }
-            x[i] = (y[i] - sum) / TRANSPOSED[i][i];
+
+            if(TRANSPOSED[i][i] < EPSILON) {
+                x[i] = 0.0;
+            } else {
+                x[i] = (y[i] - sum) / TRANSPOSED[i][i];
+            }
         }
 
         return x;
