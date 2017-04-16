@@ -44,7 +44,7 @@ public class LUDecomposite implements MatrixSolver {
                 double c = (UPPER[k][i]) / UPPER[i][i];
                 LOWER[k][i] = c; // Store the coeficient
 
-                System.out.println(i + " " + k + "    " +  UPPER[k][i] + " / " + UPPER[i][i] + " : " + c);
+                //System.out.println(i + " " + k + "    " +  UPPER[k][i] + " / " + UPPER[i][i] + " : " + c);
 
                 for(int j = i ; j < LINES; j++){
                     UPPER[k][j] -= c * UPPER[i][j]; // Multiply with the pivot line and subtract
